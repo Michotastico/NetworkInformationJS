@@ -12,45 +12,14 @@
   <script type="text/javascript" src="javascripts/script.js"></script>
   <script src="https://rawgit.com/Michotastico/NetworkInformationJS/master/detectSpeed.js"></script>
   <script src="https://rawgit.com/Michotastico/NetworkInformationJS/master/jquery-1.11.3.js"></script>
+  <script src="https://rawgit.com/Michotastico/NetworkInformationJS/master/NI.js"></script>
 
   <title>NetworkInformationJS</title>
   <meta name="description" content="JS Library to check Network information in front-to-end">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
   <script>
-  function write(s) {
-    document.getElementById("JSONBox").innerHTML = document.getElementById("JSONBox").innerHTML + s;
-  }
-  </script>
-
-  <script>
-  window.onload = function() {
-    //Console logs
-    write("Iniciando detección\n");
-    //print dots "."
-    var interval = setInterval(function () {
-      write(".");
-    }, 500);
-    //Callback to receive timing information
-    var callback = function (timings) {
-      clearInterval(interval);
-      var _time = (timings.end - timings.start)/1000;
-      var _MB = timings.dataSizeKB/1000;
-      write("\nEl proceso demoró " + _time + " segundos utilizando un archivo de " + _MB +" MB");
-      write("\nDando así una velocidad de bajada de " + (_MB/_time)*8 + " Mbps");
-      write("\nLatencia : " + timings.latency);
-      write("\nLa latencia es equivalente a una conexión del tipo: " + timings.latencySpeedClass.name);
-      write("\nThroughput : " + timings.throughput);
-      write("\nThroughPut equivalente a una conexión del tipo : " + timings.throughPutSpeedClass.name);
-
-      //write("\n\n\nTiming Information = \n" + JSON.stringify(timings, null, 4));
-    }
-    ////////////////////////////
-    //Kickoff detection process
-    ////////////////////////////
-    detectSpeed.startSpeedCheck(undefined, callback);
-  }
+      var nijs = new Nijs("JSONBox");
   </script>
 
 </head>
@@ -80,13 +49,26 @@
 <table id="GeoResults"></table>
   <pre id="JSONBox"></pre>
   <script>
-  $.getJSON("http://ip-api.com/json/?callback=?&lang=es&fields=262111", function(data) {
-    var table_body = "";
-    $.each(data, function(k, v) {
-      table_body += "<tr><td>" + k + "</td><td><b>" + v + "</b></td></tr>";
-    });
+  $(document).ready(function(){
+    nijs.receiveData();
+    var success = nijs.isSuccessful;
+    var table_body = ""
+    if(success){
+      table_body += "<tr><td> AS </td><td><b>" + nijs.getAS + "</b></td></tr>"
+      table_body += "<tr><td> País </td><td><b>" + nijs.country + "</b></td></tr>"
+      table_body += "<tr><td> Region </td><td><b>" + nijs.regionName + "</b></td></tr>"
+      table_body += "<tr><td> Ciudad </td><td><b>" + nijs.city + "</b></td></tr>"
+      table_body += "<tr><td> ISP </td><td><b>" + nijs.isp + "</b></td></tr>"
+      table_body += "<tr><td> IP </td><td><b>" + nijs.ip + "</b></td></tr>"
+      table_body += "<tr><td> Zona horaria </td><td><b>" + nijs.timezone + "</b></td></tr>"
+    }
+    else{
+      table_body += "<tr><td> Estado conexión </td><td><b> Fallida </b></td></tr>"
+    }
     $("#GeoResults").html(table_body);
-  });
+});
+
+
   </script>
 
 <p>Created by <a href="https://github.com/Michotastico" class="user-mention">@Michotastico</a></p>
