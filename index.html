@@ -47,8 +47,14 @@
 
 <p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p>
 <table id="GeoResults"></table>
+<input id="speed_button" type="button" value="Iniciar Test" onClick="speedTest();">
   <pre id="JSONBox"></pre>
   <script>
+function speedTest(){
+  document.getElementById('speed_button').style.visibility = 'hidden';
+  nijs.speedTest();
+}
+
   function _callback(){
     var success = nijs.isSuccessful;
     var table_body = ""
