@@ -49,8 +49,7 @@
 <table id="GeoResults"></table>
   <pre id="JSONBox"></pre>
   <script>
-  $(document).ready(function(){
-    nijs.receiveData();
+  function _callback(){
     var success = nijs.isSuccessful;
     var table_body = ""
     if(success){
@@ -65,10 +64,8 @@
     else{
       table_body += "<tr><td> Estado conexión </td><td><b> Fallida </b></td></tr>"
     }
-    $("#GeoResults").html(table_body);
-});
-
-
+    $("#GeoResults").html(table_body);}
+    nijs.receiveData(_callback);
   </script>
 
 <p>Created by <a href="https://github.com/Michotastico" class="user-mention">@Michotastico</a></p>
