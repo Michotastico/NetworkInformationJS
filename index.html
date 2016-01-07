@@ -47,8 +47,10 @@
 
 <p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p>
 <table id="GeoResults"></table>
-<input id="speed_button" type="button" value="Iniciar Test" onClick="speedTest();">
-  <pre id="JSONBox"></pre>
+<center><input id="speed_button" type="button" value="Iniciar Test" onClick="speedTest();"></center>
+<h1 id="header"></h1>
+
+  <pre id="JSONBox"><h6 id="loading"></h6></pre>
   <script>
 function speedTest(){
   document.getElementById('speed_button').style.visibility = 'hidden';
