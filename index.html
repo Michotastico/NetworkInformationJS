@@ -22,27 +22,36 @@
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script>
-      var nijs = new NIJS("JSONBox");
+  var nijs = new NIJS();
 
-      function loadingbar(_where, percentage){
-        var bar_percentage = Math.floor(percentage);
-        $('.progress-bar').css('width', percentage+'%');
-        if(bar_percentage == 100){
-          setTimeout(function () {
-              document.getElementById('progress_bar').style.visibility = 'hidden';
-              document.getElementById('header').innerHTML = "Resultados de la conexión";
-          }, 1000);
+  function write(where, what){
+    document.getElementById(where).innerHTML = document.getElementById(where).innerHTML + what;
+  }
 
-        }
-      }
+  function loadingbar(_where, percentage){
+    var bar_percentage = Math.floor(percentage);
+    $('.progress-bar').css('width', percentage+'%');
+    if(bar_percentage == 100){
+      setTimeout(function () {
+          var where = "JSONBox";
+          document.getElementById('progress_bar').style.visibility = 'hidden';
+          write(where,"\nEl proceso demoró " + nijs.total_time + " dando así una velocidad de bajada de " + nijs.downloadSpeed() + " Mbps");
+          write(where,"\nLatencia : " + nijs.latency());
+          write(where,"\nLa latencia es equivalente a una conexión del tipo: " + nijs.latencyType());
+          write(where,"\nThroughput : " + nijs.throughput());
+          write(where,"\nThroughPut equivalente a una conexión del tipo : " + nijs.throughputType());
+      }, 1000);
 
-      var onprogress = function c(evt){
-        if (evt.lengthComputable)
-        {
-          var percentComplete = (evt.loaded / evt.total)*100;
-          loadingbar("loading",percentComplete);
-        }
-      }
+    }
+  }
+
+  var onprogress = function c(evt){
+    if (evt.lengthComputable)
+    {
+      var percentComplete = (evt.loaded / evt.total)*100;
+      loadingbar("loading",percentComplete);
+    }
+  }
   </script>
 
 </head>
@@ -57,76 +66,76 @@
       <p class="tagline">JS Library to check Network information in front end</p>
       <div id="main" role="main">
         <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/Michotastico/NetworkInformationJS/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/Michotastico/NetworkInformationJS/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/Michotastico/NetworkInformationJS" class="code">View Networkinformationjs on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
+          <div class="inner">
+            <a href="https://github.com/Michotastico/NetworkInformationJS/tarball/master" class="download-button tar"><span>Download</span></a>
+            <a href="https://github.com/Michotastico/NetworkInformationJS/zipball/master" class="download-button zip"><span>Download</span></a>
+            <a href="https://github.com/Michotastico/NetworkInformationJS" class="code">View Networkinformationjs on GitHub</a>
+          </div>
+          <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
           <h1>
-<a id="networkinformationjs" class="anchor" href="#networkinformationjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Información de conexión</h1>
+            <a id="networkinformationjs" class="anchor" href="#networkinformationjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Información de conexión</h1>
 
-<p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p>
-<table id="GeoResults"></table>
-<center><input id="speed_button" type="button" value="Iniciar Test" onClick="speedTest();"></center>
-<h1 id="header"></h1>
-<div class="progress" id="progress_bar" style="visibility: hidden">
-<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
-aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%" >
-</div>
-</div>
-  <pre id="JSONBox" style="visibility: hidden"></pre>
-  <script>
-function speedTest(){
-  document.getElementById('speed_button').style.visibility = 'hidden';
-  document.getElementById('progress_bar').style.visibility = 'visible';
-  document.getElementById('JSONBox').style.visibility = 'visible';
-  write("header","Iniciando detección\n");
-  nijs.speedTest(onprogress);
-}
+            <p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p>
+            <table id="GeoResults"></table>
+            <center><input id="speed_button" type="button" value="Iniciar Test" onClick="speedTest();"></center>
+            <h1 id="header"></h1>
+            <div class="progress" id="progress_bar" style="visibility: hidden">
+              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+              aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%" >
+            </div>
+          </div>
+          <pre id="JSONBox" style="visibility: hidden"></pre>
+          <script>
+          function speedTest(){
+            document.getElementById('speed_button').style.visibility = 'hidden';
+            document.getElementById('progress_bar').style.visibility = 'visible';
+            document.getElementById('JSONBox').style.visibility = 'visible';
+            write("header","Iniciando detección\n");
+            nijs.speedTest(onprogress);
+          }
 
-  function _callback(){
-    var success = nijs.isSuccessful();
-    var table_body = ""
-    if(success){
-      table_body += "<tr><td> AS </td><td><b>" + nijs.getAS() + "</b></td></tr>"
-      table_body += "<tr><td> País </td><td><b>" + nijs.country() + "</b></td></tr>"
-      table_body += "<tr><td> Region </td><td><b>" + nijs.regionName() + "</b></td></tr>"
-      table_body += "<tr><td> Ciudad </td><td><b>" + nijs.city() + "</b></td></tr>"
-      table_body += "<tr><td> ISP </td><td><b>" + nijs.isp() + "</b></td></tr>"
-      table_body += "<tr><td> IP </td><td><b>" + nijs.ip() + "</b></td></tr>"
-      table_body += "<tr><td> Zona horaria </td><td><b>" + nijs.timezone() + "</b></td></tr>"
-    }
-    else{
-      table_body += "<tr><td> Estado conexión </td><td><b> Fallida </b></td></tr>"
-    }
-    $("#GeoResults").html(table_body);}
-    nijs.receiveData(_callback);
-  </script>
+          function _callback(){
+            var success = nijs.isSuccessful();
+            var table_body = ""
+            if(success){
+              table_body += "<tr><td> AS </td><td><b>" + nijs.getAS() + "</b></td></tr>"
+              table_body += "<tr><td> País </td><td><b>" + nijs.country() + "</b></td></tr>"
+              table_body += "<tr><td> Region </td><td><b>" + nijs.regionName() + "</b></td></tr>"
+              table_body += "<tr><td> Ciudad </td><td><b>" + nijs.city() + "</b></td></tr>"
+              table_body += "<tr><td> ISP </td><td><b>" + nijs.isp() + "</b></td></tr>"
+              table_body += "<tr><td> IP </td><td><b>" + nijs.ip() + "</b></td></tr>"
+              table_body += "<tr><td> Zona horaria </td><td><b>" + nijs.timezone() + "</b></td></tr>"
+            }
+            else{
+              table_body += "<tr><td> Estado conexión </td><td><b> Fallida </b></td></tr>"
+            }
+            $("#GeoResults").html(table_body);}
+            nijs.receiveData(_callback);
+            </script>
 
-<p>Created by <a href="https://github.com/Michotastico" class="user-mention">@Michotastico</a></p>
-        </article>
+            <p>Created by <a href="https://github.com/Michotastico" class="user-mention">@Michotastico</a></p>
+          </article>
+        </div>
       </div>
+      <footer>
+        <div class="owner">
+          <p><a href="https://github.com/Michotastico" class="avatar"><img src="https://avatars3.githubusercontent.com/u/11854074?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/Michotastico">Michotastico</a> maintains <a href="https://github.com/Michotastico/NetworkInformationJS">Networkinformationjs</a></p>
+
+
+        </div>
+        <div class="creds">
+          <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+        </div>
+      </footer>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/Michotastico" class="avatar"><img src="https://avatars3.githubusercontent.com/u/11854074?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/Michotastico">Michotastico</a> maintains <a href="https://github.com/Michotastico/NetworkInformationJS">Networkinformationjs</a></p>
+    <div class="current-section">
+      <a href="#top">Scroll to top</a>
+      <a href="https://github.com/Michotastico/NetworkInformationJS/tarball/master" class="tar">tar</a><a href="https://github.com/Michotastico/NetworkInformationJS/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+      <p class="name"></p>
+    </div>
 
 
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/Michotastico/NetworkInformationJS/tarball/master" class="tar">tar</a><a href="https://github.com/Michotastico/NetworkInformationJS/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
-
-
-</body>
-</html>
+  </body>
+  </html>
