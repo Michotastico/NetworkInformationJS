@@ -35,6 +35,7 @@
       setTimeout(function () {
           var where = "JSONBox";
           document.getElementById('progress_bar').style.visibility = 'hidden';
+          document.getElementById('header').innerHTML = "Resultados de la conexión";
           write(where,"\nEl proceso demoró " + nijs.total_time + " dando así una velocidad de bajada de " + nijs.downloadSpeed() + " Mbps");
           write(where,"\nLatencia : " + nijs.latency());
           write(where,"\nLa latencia es equivalente a una conexión del tipo: " + nijs.latencyType());
