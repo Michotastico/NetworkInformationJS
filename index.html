@@ -23,7 +23,8 @@
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script>
-  var nijs = new NIJS();
+  const file = "http://michotastico.github.io/assets/images/space.jpg";
+  var nijs = new NIJS(file);
 
   function map(lat,lon){
     latlon = new google.maps.LatLng(lat, lon)
