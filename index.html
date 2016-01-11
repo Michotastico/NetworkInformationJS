@@ -99,9 +99,14 @@
 
           function _callback(){
             var success = nijs.isSuccessful();
+            var proxy = "Sin uso";
+            if(nijs.useProxy()){
+              proxy = "En uso";
+            }
             var table_body = ""
             if(success){
               table_body += "<tr><td> AS </td><td><b>" + nijs.getAS() + "</b></td></tr>"
+              table_body += "<tr><td> Proxy </td><td><b>" + proxy + "</b></td></tr>"
               table_body += "<tr><td> País </td><td><b>" + nijs.country() + "</b></td></tr>"
               table_body += "<tr><td> Region </td><td><b>" + nijs.regionName() + "</b></td></tr>"
               table_body += "<tr><td> Ciudad </td><td><b>" + nijs.city() + "</b></td></tr>"
