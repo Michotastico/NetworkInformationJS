@@ -16,6 +16,7 @@
   <script src="javascripts/bootstrap.min.js"></script>
   <!-- <script src="https://rawgit.com/Michotastico/NetworkInformationJS/master/NI.js"></script>-->
   <script src="https://rawgit.com/Michotastico/NetworkInformationJS/master/NI-allbrowsers.js"></script>
+  <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
   <title>NetworkInformationJS</title>
   <meta name="description" content="JS Library to check Network information in front-to-end">
@@ -23,6 +24,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script>
   var nijs = new NIJS();
+
+  function map(lat,lon){
+    latlon = new google.maps.LatLng(lat, lon)
+      mapholder = document.getElementById('mapholder')
+      mapholder.style.height = '250px';
+      mapholder.style.width = '500px';
+
+      var myOptions = {
+      center:latlon,zoom:14,
+      mapTypeId:google.maps.MapTypeId.ROADMAP,
+      mapTypeControl:false,
+      navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+      }
+
+      var map = new google.maps.Map(document.getElementById("mapholder"), myOptions);
+      var marker = new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
+  }
 
   function write(where, what){
     document.getElementById(where).innerHTML = document.getElementById(where).innerHTML + what;
@@ -53,6 +71,8 @@
       loadingbar("loading",percentComplete);
     }
   }
+
+  nijs.askLatlon(map);
   </script>
 
 </head>
@@ -78,8 +98,10 @@
           <h1>
             <a id="networkinformationjs" class="anchor" href="#networkinformationjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Información de conexión</h1>
 
-            <p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p>
+
+            <center><div id="mapholder"></div></center>
             <table id="GeoResults"></table>
+            <center><p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p></center>
             <center><input id="speed_button" type="button" value="Iniciar Test" onClick="speedTest();"></center>
             <h1 id="header"></h1>
             <div class="progress" id="progress_bar" style="visibility: hidden">
@@ -99,14 +121,9 @@
 
           function _callback(){
             var success = nijs.isSuccessful();
-            var proxy = "Sin uso";
-            if(nijs.useProxy()){
-              proxy = "En uso";
-            }
             var table_body = ""
             if(success){
               table_body += "<tr><td> AS </td><td><b>" + nijs.getAS() + "</b></td></tr>"
-              table_body += "<tr><td> Proxy </td><td><b>" + proxy + "</b></td></tr>"
               table_body += "<tr><td> País </td><td><b>" + nijs.country() + "</b></td></tr>"
               table_body += "<tr><td> Region </td><td><b>" + nijs.regionName() + "</b></td></tr>"
               table_body += "<tr><td> Ciudad </td><td><b>" + nijs.city() + "</b></td></tr>"
