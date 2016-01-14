@@ -145,6 +145,7 @@
           <pre id="National_Result" style="visibility: hidden"></pre>
           <h1 id="Internacional"></h1>
           <pre id="International_Result" style="visibility: hidden"></pre>
+          <center>"JSON_display" style="visibility: hidden"></pre>
           <script>
           function speedTestInternational(){
             document.getElementById('header').innerHTML = "Iniciando detección\n";
@@ -177,6 +178,83 @@
               }
             }
             heimdal.runTest(onprogress, file_national);
+          }
+
+          function showJSON(){
+            var json = JSON.stringify(heimdal, null, 4);
+            document.getElementById('JSON').innerHTML = "JSON";
+            document.getElementById('JSON_display').innerHTML = json;
+            document.getElementById('JSON_display').style.visibility = 'visible';
+            document.getElementById('json_button').value = "Actualizar JSON";
+          }
+          </script>
+
+          <p>Created by <a href="https://github.com/Michotastico" class="user-mention">@Michotastico</a></p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+        <p><a href="https://github.com/Michotastico" class="avatar"><img src="https://avatars3.githubusercontent.com/u/11854074?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/Michotastico">Michotastico</a> maintains <a href="https://github.com/Michotastico/NetworkInformationJS">Networkinformationjs</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/Michotastico/NetworkInformationJS/tarball/master" class="tar">tar</a><a href="https://github.com/Michotastico/NetworkInformationJS/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+
+</body>
+</html>="JSON"></h1>
+          </center>
+          <pre id="JSON_display" style="visibility: hidden"></pre>
+          <script>
+          function speedTestInternational(){
+            document.getElementById('header').innerHTML = "Iniciando detección\n";
+            document.getElementById('header').style.visibility = 'visible';
+            document.getElementById('speed_button_international').disabled = true;
+            document.getElementById('speed_button_international').value = "Test internacional realizado";
+            document.getElementById('progress_bar').style.visibility = 'visible';
+            document.getElementById('International_Result').style.visibility = 'visible';
+            var onprogress = function c(evt){
+              if (evt.lengthComputable)
+              {
+                var percentComplete = (evt.loaded / evt.total)*100;
+                loadingbar("International_Result", "Internacional", percentComplete);
+              }
+            }
+            heimdal.runTest(onprogress,file_international);
+          }
+          function speedTestNational(){
+            document.getElementById('header').innerHTML = "Iniciando detección\n";
+            document.getElementById('header').style.visibility = 'visible';
+            document.getElementById('speed_button_national').disabled = true;
+            document.getElementById('speed_button_national').value = "Test nacional realizado";
+            document.getElementById('progress_bar').style.visibility = 'visible';
+            document.getElementById('National_Result').style.visibility = 'visible';
+            var onprogress = function c(evt){
+              if (evt.lengthComputable)
+              {
+                var percentComplete = (evt.loaded / evt.total)*100;
+                loadingbar("National_Result", "Nacional", percentComplete);
+              }
+            }
+            heimdal.runTest(onprogress, file_national);
+          }
+
+          function showJSON(){
+            var json = JSON.stringify(heimdal, null, 4);
+            document.getElementById('JSON').innerHTML = "JSON";
+            document.getElementById('JSON_display').innerHTML = json;
+            document.getElementById('JSON_display').style.visibility = 'visible';
+            document.getElementById('json_button').value = "Actualizar JSON";
           }
           </script>
 
