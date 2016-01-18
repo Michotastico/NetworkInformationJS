@@ -35,26 +35,27 @@
 
 
 /**
- * NetworkInformation - Class who get the information of the client network
- * @class NetworkInformation
- * @classdesc Class who get the information of the client network
- *
- */
+* NetworkInformation - Class who get the information of the client network
+* @class NetworkInformation
+* @classdesc Class who get the information of the client network
+*
+*/
 function NetworkInformation(){
   this.googleInformation = null;
   this.ipApiInformation = null;
   this.currentOs = "Unknown";
   this.networkType = "Unknown";
   this.coordinates = [0, 0];
+  this.pings = [];
 
   /**
-   * getGoogleInfo - receive the data from google and set in the internal vars
-   *
-   * @memberof! NetworkInformation
-   * @param  {number} lat latitude
-   * @param  {number} lon longitude
-   * @return {undefined}
-   */
+  * getGoogleInfo - receive the data from google and set in the internal vars
+  *
+  * @memberof! NetworkInformation
+  * @param  {number} lat latitude
+  * @param  {number} lon longitude
+  * @return {undefined}
+  */
   this.getGoogleInfo = function(lat, lon){
     try{
       var geocoder;
@@ -80,22 +81,22 @@ function NetworkInformation(){
   }
 
   /**
-   * setInformation - Set all the information to the class. Requesting to the navigator, google and ip-api
-   *
-   * @memberof! NetworkInformation
-   * @param  {function} readyMethod function called when the information was setted
-   * @return {undefined}
-   */
+  * setInformation - Set all the information to the class. Requesting to the navigator, google and ip-api
+  *
+  * @memberof! NetworkInformation
+  * @param  {function} readyMethod function called when the information was setted
+  * @return {undefined}
+  */
   this.setInformation = function(readyMethod){
     var selfNetwork = this;
 
     /**
-     * getHtml5Geolocation - get the geolocalitation from the navigator
-     *
-     * @param  {function} tail_method      next function to be called.
-     * @param  {function} callbackfunction callback function
-     * @return {undefined}
-     */
+    * getHtml5Geolocation - get the geolocalitation from the navigator
+    *
+    * @param  {function} tail_method      next function to be called.
+    * @param  {function} callbackfunction callback function
+    * @return {undefined}
+    */
     getHtml5Geolocation = function(tail_method, callbackfunction){
       var success = function(data){
         selfNetwork.coordinates = [data.coords.latitude, data.coords.longitude];
@@ -121,11 +122,11 @@ function NetworkInformation(){
     }
 
     /**
-     * getIpApiInformation - get the network information from ip-api
-     *
-     * @param  {function} callbackfunction callback function
-     * @return {undefined}
-     */
+    * getIpApiInformation - get the network information from ip-api
+    *
+    * @param  {function} callbackfunction callback function
+    * @return {undefined}
+    */
     getIpApiInformation = function(callbackfunction){
       var setData = function(data){
         selfNetwork.ipApiInformation = data;
@@ -138,10 +139,10 @@ function NetworkInformation(){
     getHtml5Geolocation(getIpApiInformation, readyMethod);
 
     /**
-     * anonymous function - Timeout to call getIpApiInformation function because a bug in navigator.geolocation.getCurrentPosition method
-     *
-     * @return {undefined}
-     */
+    * anonymous function - Timeout to call getIpApiInformation function because a bug in navigator.geolocation.getCurrentPosition method
+    *
+    * @return {undefined}
+    */
     setTimeout(function () {
       if(selfNetwork.googleInformation == null &amp;&amp; selfNetwork.ipApiInformation == null){
         window.console.log("No hubo confirmación o se declinó.");
@@ -153,21 +154,21 @@ function NetworkInformation(){
   }
 
   /**
-   * getAS - Get Autonomous system
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  Autonomous system
-   */
+  * getAS - Get Autonomous system
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  Autonomous system
+  */
   this.getAS = function(){
     return this.ipApiInformation.as;
   }
 
   /**
-   * getCity - Get city
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  city
-   */
+  * getCity - Get city
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  city
+  */
   this.getCity = function(){
     if(this.googleInformation){
       return this.googleInformation[1];
@@ -178,11 +179,11 @@ function NetworkInformation(){
   }
 
   /**
-   * getCountry - Get country
-   *
-   * @memberof! NetworkInformation
-   * @return {string} country
-   */
+  * getCountry - Get country
+  *
+  * @memberof! NetworkInformation
+  * @return {string} country
+  */
   this.getCountry = function(){
     if(this.googleInformation){
       return this.googleInformation[4];
@@ -193,31 +194,31 @@ function NetworkInformation(){
   }
 
   /**
-   * getCountryCode - Get country code
-   *
-   * @memberof! NetworkInformation
-   * @return {string} country code
-   */
+  * getCountryCode - Get country code
+  *
+  * @memberof! NetworkInformation
+  * @return {string} country code
+  */
   this.getCountryCode = function(){
     return this.ipApiInformation.countryCode;
   }
 
   /**
-   * getIsp - Get the ISP
-   *
-   * @memberof! NetworkInformation
-   * @return {string} ISP
-   */
+  * getIsp - Get the ISP
+  *
+  * @memberof! NetworkInformation
+  * @return {string} ISP
+  */
   this.getIsp = function(){
     return this.ipApiInformation.isp;
   }
 
   /**
-   * getCoordinates - Get Latlong of client.
-   *
-   * @memberof! NetworkInformation
-   * @return {Array}  [Latitude, Longitude]
-   */
+  * getCoordinates - Get Latlong of client.
+  *
+  * @memberof! NetworkInformation
+  * @return {Array}  [Latitude, Longitude]
+  */
   this.getCoordinates = function(){
     if(this.coordinates[0] === 0 &amp;&amp; this.coordinates[1] === 0){
       this.coordinates = [this.ipApiInformation.lat, this.ipApiInformation.lon];
@@ -226,21 +227,21 @@ function NetworkInformation(){
   }
 
   /**
-   * getOrganization - Get organization (or ISP if didn't exists)
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  organization
-   */
+  * getOrganization - Get organization (or ISP if didn't exists)
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  organization
+  */
   this.getOrganization = function(){
     return this.ipApiInformation.org;
   }
 
   /**
-   * useProxy - Check if the user use a proxy
-   *
-   * @memberof! NetworkInformation
-   * @return {boolean} True if the user use a proxy
-   */
+  * useProxy - Check if the user use a proxy
+  *
+  * @memberof! NetworkInformation
+  * @return {boolean} True if the user use a proxy
+  */
   this.useProxy = function(){
     if(this.googleInformation == null){
       return false;
@@ -258,21 +259,21 @@ function NetworkInformation(){
   }
 
   /**
-   * getIp - Get IP
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  IP
-   */
+  * getIp - Get IP
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  IP
+  */
   this.getIp = function(){
     return this.ipApiInformation.query;
   }
 
   /**
-   * getRegion - Get region
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  Region
-   */
+  * getRegion - Get region
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  Region
+  */
   this.getRegion = function(){
     if(this.googleInformation){
       return this.googleInformation[3];
@@ -283,11 +284,11 @@ function NetworkInformation(){
   }
 
   /**
-   * getRegionName - Get region's name
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  Region's name
-   */
+  * getRegionName - Get region's name
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  Region's name
+  */
   this.getRegionName = function(){
     if(this.googleInformation){
       return this.googleInformation[3];
@@ -298,21 +299,21 @@ function NetworkInformation(){
   }
 
   /**
-   * getReverseDNS - Get the reverse of the DNS
-   *
-   * @memberof! NetworkInformation
-   * @return {string}  Reverse of the DNS
-   */
+  * getReverseDNS - Get the reverse of the DNS
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  Reverse of the DNS
+  */
   this.getReverseDNS = function(){
     return this.ipApiInformation.reverse;
   }
 
   /**
-   * isSuccessful - Check if the connection was successful
-   *
-   * @memberof! NetworkInformation
-   * @return {boolean}  True if the connection was successful
-   */
+  * isSuccessful - Check if the connection was successful
+  *
+  * @memberof! NetworkInformation
+  * @return {boolean}  True if the connection was successful
+  */
   this.isSuccessful = function(){
     if(this.ipApiInformation.status == "success"){
       return true;
@@ -323,42 +324,42 @@ function NetworkInformation(){
   }
 
   /**
-   * getTimezone - Get timezone
-   *
-   * @memberof! NetworkInformation
-   * @return {string} Timezone
-   */
+  * getTimezone - Get timezone
+  *
+  * @memberof! NetworkInformation
+  * @return {string} Timezone
+  */
   this.getTimezone = function(){
     return this.ipApiInformation.timezone;
   }
 
   /**
-   * isAndroid - Check if the device is Android
-   *
-   * @memberof! NetworkInformation
-   * @return {boolean} True if the device is Android
-   */
+  * isAndroid - Check if the device is Android
+  *
+  * @memberof! NetworkInformation
+  * @return {boolean} True if the device is Android
+  */
   this.isAndroid = function(){
     return /Android/i.test(navigator.userAgent);
   }
 
-    /**
-     * isMobile - Check if the device is mobile
-     *
-     * @memberof! NetworkInformation
-     * @return {boolean} True if the device is mobile
-     */
+  /**
+  * isMobile - Check if the device is mobile
+  *
+  * @memberof! NetworkInformation
+  * @return {boolean} True if the device is mobile
+  */
   this.isMobile = function(){
     var device = navigator.userAgent;
     return /Android|BlackBerry|iPhone|iPad|iPod|IEMobile/i.test(device);
   }
 
-    /**
-     * checkConnectionType - If its avalaible, check the connection type. (Only work on Android)
-     *
-     * @memberof! NetworkInformation
-     * @return {string}  Connection Type
-     */
+  /**
+  * checkConnectionType - If its avalaible, check the connection type. (Only work on Android)
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  Connection Type
+  */
   this.checkConnectionType = function(){
     var connection =  navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if(connection == undefined){
@@ -369,12 +370,12 @@ function NetworkInformation(){
     }
   }
 
-    /**
-     * getOS - Get the OS of the client
-     *
-     * @memberof! NetworkInformation
-     * @return {string}  Operative System
-     */
+  /**
+  * getOS - Get the OS of the client
+  *
+  * @memberof! NetworkInformation
+  * @return {string}  Operative System
+  */
   this.getOS = function(){
     var os = "Unknown";
     var device = navigator.userAgent;
@@ -392,6 +393,77 @@ function NetworkInformation(){
     }
     else{;}
     return os;
+  }
+
+  /**
+  * ping - ping to a url. WARNING: THIS REQUIRED A SERVER TO CHECK IF A URL REALLY EXISTS.
+  *
+  * @memberof! NetworkInformation
+  * @param {string} url the url to be pinged
+  * @return {undefined}
+  */
+  this.ping = function(url){
+    var loop_iter = 4;
+    var max_iter = 5;
+    var loop_time = 1000;
+    var counter = 0;
+    var flag = 0;
+    var total_time = 0;
+    var timeout = 9000;
+    var timeout_error = 0;
+    var selfNetwork = this;
+
+    var loop = setInterval(function(){
+      _url = "http://" + url + "/" + Date.now() + Math.random().toString(36).substring(7);
+
+      if(counter &lt; max_iter){
+        var ping = new XMLHttpRequest();
+
+        counter ++;
+        ping.seq = counter;
+        flag++;
+
+        ping.start_time = Date.now();
+        ping.timeout = timeout;
+        ping.onreadystatechange = function(){
+          if (ping.readyState == 4 &amp;&amp; timeout_error == 0) {
+            flag--;
+            if (ping.seq > 1) {
+              delta_time = Date.now() - ping.start_time;
+              total_time += delta_time;
+            }
+          }
+        }
+        ping.ontimeout = function(){
+          timeout_error = 1;
+        }
+        ping.open("GET", _url, true);
+        ping.send();
+      }
+
+      if ((counter > loop_iter) &amp;&amp; (flag &lt; 1)) {
+            clearInterval(loop);
+            var avg_time = Math.round(total_time / (counter - 1));
+            var ping_object = new function(){
+              this.time = avg_time;
+              this.status = "SUCCESS";
+              this.url = _url;
+            }
+            selfNetwork.pings.push(ping_object);
+
+        }
+        if (timeout_error == 1) {
+            clearInterval(loop);
+            var ping_object = new function(){
+              this.time = 0;
+              this.status = "FAILED";
+              this.url = _url;
+            }
+            selfNetwork.pings.push(ping_object);
+            return;
+
+        }
+    }, loop_time);
   }
 
   this.currentOs = this.getOS();
@@ -415,7 +487,7 @@ function NetworkInformation(){
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Jan 14 2016 11:14:44 GMT-0300 (CLT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jan 18 2016 16:05:47 GMT-0300 (CLT)
 </footer>
 
 <script> prettyPrint(); </script>
