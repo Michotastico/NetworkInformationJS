@@ -63,7 +63,7 @@
         var arr = heimdal.getSpeedTests();
         var nijs = arr[arr.length - 1];
         document.getElementById('header').style.visibility = 'hidden';
-        document.getElementById('progress_bar').style.visibility = 'hidden';
+        document.getElementById('progress_bar').style.display = 'none';;
         $('.progress-bar').css('width','0%');
         document.getElementById(_loc).innerHTML = "Resultados de la conexión " + _loc;
         write(where,"\nEl proceso demoró " + nijs.getTestTime() + " dando así una velocidad de bajada de " + nijs.getDownloadSpeed() + " Mbps");
@@ -103,6 +103,27 @@
     map(coords[0], coords[1]);
   }
 
+  function pingTable(){
+    var nu = new NetworkUtilities();
+    function _callback(){
+      var pings = nu.getPings();
+      var table_body = "<tr><td><b>Página</b></td><td><b>Tiempo (ms)</b></td><td><b>Estado</b></td></tr>";
+      for(x in pings){
+        var p = pings[x];
+        if(p.status === "SUCCESS"){
+          table_body += "<tr><td>"+p.url+"</td><td>"+p.time+"</td><td>Accesible</td></tr>";
+        }
+        else{
+          table_body += "<tr><td>"+p.url+"</td><td>-</td><td>Inaccesible</td></tr>";
+        }
+      }
+      $("#PingResults").html(table_body);
+      document.getElementById('loading_gif').style.display = 'none';
+      document.getElementById('header_ping').innerHTML = "Resultados Test de Ping\n";
+    }
+    nu.pingTops(_callback);
+  }
+
   </script>
 
 </head>
@@ -131,39 +152,62 @@
 
             <center><div id="mapholder"></div></center>
             <table id="GeoResults"></table>
+            <h1 id="header_ping">Test de Ping</h1>
+            <table id="PingResults"></table>
+            <center><img id ="loading_gif" src="images/gears.gif" style="display:none"></center>
+            <center>
+              <input id="ping_button" type="button" value="Realizar prueba de ping" onClick="pingTest();">
+            </center>
+            <h1>Test de Velocidad</h1>
             <center><p>Se utilizará un archivo de ~20MB para comprobar la velocidad de bajada.</p></center>
             <center>
               <input id="speed_button_national" type="button" value="Iniciar Test Nacional" onClick="speedTestNational();">
               <input id="speed_button_international" type="button" value="Iniciar Test Internacional" onClick="speedTestInternational();">
             </center>
             <h1 id="header"></h1>
-            <div class="progress" id="progress_bar" style="visibility: hidden">
+            <div class="progress" id="progress_bar" style="display:none">
               <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
               aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%" >
             </div>
           </div>
+
           <h1 id="Nacional"></h1>
-          <pre id="National_Result" style="visibility: hidden"></pre>
+          <div id="National_stuff" style="display:none">
+          <pre id="National_Result"></pre>
+        </div>
           <h1 id="Internacional"></h1>
-          <pre id="International_Result" style="visibility: hidden"></pre>
+          <div id="International_stuff" style="display:none">
+          <pre id="International_Result"></pre>
+          </div>
           <center>
+            <hr>
             <input id="json_button" type="button" value="Mostrar JSON" onClick="showJSON();">
             <h1 id="JSON"></h1>
           </center>
-          <pre id="JSON_display" style="visibility: hidden"></pre>
+          <div id="json_stuff" style="display:none">
+          <pre id="JSON_display"></pre>
+        </div>
           <script>
+          function pingTest(){
+            document.getElementById('header_ping').innerHTML = "Realizando Tests de Ping\n";
+            document.getElementById('loading_gif').style.display = 'inline';
+            document.getElementById('ping_button').style.display = 'none';
+            pingTable();
+          }
           function speedTestInternational(){
             document.getElementById('header').innerHTML = "Iniciando detección\n";
             document.getElementById('header').style.visibility = 'visible';
             document.getElementById('speed_button_international').disabled = true;
             document.getElementById('speed_button_international').value = "Test internacional realizado";
-            document.getElementById('progress_bar').style.visibility = 'visible';
-            document.getElementById('International_Result').style.visibility = 'visible';
+            document.getElementById('progress_bar').style.display = 'block';
             var onprogress = function c(evt){
               if (evt.lengthComputable)
               {
                 var percentComplete = (evt.loaded / evt.total)*100;
                 loadingbar("International_Result", "Internacional", percentComplete);
+                if(percentComplete == 100){
+                  document.getElementById('International_stuff').style.display = 'block';
+                }
               }
             }
             heimdal.runTest(onprogress,file_international);
@@ -173,13 +217,15 @@
             document.getElementById('header').style.visibility = 'visible';
             document.getElementById('speed_button_national').disabled = true;
             document.getElementById('speed_button_national').value = "Test nacional realizado";
-            document.getElementById('progress_bar').style.visibility = 'visible';
-            document.getElementById('National_Result').style.visibility = 'visible';
+            document.getElementById('progress_bar').style.display = 'block';
             var onprogress = function c(evt){
               if (evt.lengthComputable)
               {
                 var percentComplete = (evt.loaded / evt.total)*100;
                 loadingbar("National_Result", "Nacional", percentComplete);
+                if(percentComplete == 100){
+                  document.getElementById('National_stuff').style.display = 'block';
+                }
               }
             }
             heimdal.runTest(onprogress, file_national);
@@ -189,7 +235,7 @@
             var json = JSON.stringify(heimdal, null, 4);
             document.getElementById('JSON').innerHTML = "JSON";
             document.getElementById('JSON_display').innerHTML = json;
-            document.getElementById('JSON_display').style.visibility = 'visible';
+            document.getElementById('json_stuff').style.display = 'block';
             document.getElementById('json_button').value = "Actualizar JSON";
           }
           </script>
