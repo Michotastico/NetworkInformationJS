@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: NetworkUtilities.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: NetworkUtilities.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+* @file Class with network utilities.
+* @author [Michel Llorens]{@link http://michotastico.github.io}
+* @version 1.0.0
+* @license MIT
+*/
+
+
+/**
+* NetworkUtilities - Class with network utilities, as ping method. WARNING: This class is experimental, the methods contained here probably require a server.
+* @class NetworkUtilities
+* @classdesc  Class with network utilities, as ping method. WARNING: This class is experimental, the methods contained here probably require a server.
+*
+*/
+function NetworkUtilities(){
+
+  this.pings = [];
+
+
+    /**
+    * ping - ping to a url. WARNING: THIS REQUIRED A SERVER TO CHECK IF A URL REALLY EXISTS. OTHERWISE THE PING SUCCESS WITH FALSE POSITIVE.
+    *
+    * @memberof! NetworkUtilities
+    * @param {string} url the url to be pinged
+    * @param {function} callback Callback function when the specific ping as done. Receive a ping object with the time, the status and the url.
+    * @return {undefined}
+    */
+    this.ping = function(url, callback){
+      var loop_iter = 4;
+      var max_iter = 5;
+      var loop_time = 1000;
+      var counter = 0;
+      var flag = 0;
+      var total_time = 0;
+      var timeout = 9000;
+      var timeout_error = 0;
+      var selfUtilities = this;
+      var _cb = callback;
+      var pinged_url = url;
+
+      var loop = setInterval(function(){
+        _url = "http://" + url + "/" + Date.now() + Math.random().toString(36).substring(7);
+
+        if(counter &lt; max_iter){
+          var ping = new XMLHttpRequest();
+
+          counter ++;
+          ping.seq = counter;
+          flag++;
+
+          ping.start_time = Date.now();
+          ping.timeout = timeout;
+          ping.onreadystatechange = function(){
+            if (ping.readyState == 4 &amp;&amp; timeout_error == 0) {
+              flag--;
+              if (ping.seq > 1) {
+                delta_time = Date.now() - ping.start_time;
+                total_time += delta_time;
+              }
+            }
+          }
+          ping.ontimeout = function(){
+            timeout_error = 1;
+          }
+          ping.open("GET", _url, true);
+          ping.send();
+        }
+
+        if ((counter > loop_iter) &amp;&amp; (flag &lt; 1)) {
+              clearInterval(loop);
+              var avg_time = Math.round(total_time / (counter - 1));
+              var ping_object = new function(){
+                this.time = avg_time;
+                this.status = "SUCCESS";
+                this.url = pinged_url;
+              }
+              selfUtilities.pings.push(ping_object);
+              _cb(ping_object);
+
+          }
+          if (timeout_error == 1) {
+              clearInterval(loop);
+              var ping_object = new function(){
+                this.time = 0;
+                this.status = "FAILED";
+                this.url = pinged_url;
+              }
+              selfUtilities.pings.push(ping_object);
+              _cb(ping_object);
+              return;
+
+          }
+      }, loop_time);
+    }
+
+    /**
+    * getPings - Get an array with pings.
+    *
+    * @memberof! NetworkUtilities
+    * @return {Array} Pings
+    */
+    this.getPings = function(){
+      return this.pings;
+    }
+
+    /**
+     * pingTops - Make a ping to TOP_CL urls
+     *
+     * @memberof! NetworkUtilities
+     * @param {function} callback The callback function when the proccess finish.
+     * @return {undefined}
+     */
+     this.pingTops = function(callback){
+       var top_length = TOP_CL.length;
+       var selfUtilities = this;
+       function triggerCallback(ping){
+         if(selfUtilities.pings.length == top_length){
+           callback();
+         }
+       }
+       for(_url in TOP_CL){
+         this.ping(TOP_CL[_url], triggerCallback);
+       }
+     }
+
+    /**
+     * checkNAT - Send a request to a specific server to check if the client is behind NAT. With callback function.
+     *
+     * @memberof! NetworkUtilities
+     *
+     * @param {string} url The url of the server.
+     * @param {function} callback The callback function. Receive server answer as param.
+     * @return {undefined}
+     */
+    this.checkNAT = function(url, callback){
+      var information = "" + Date.now();
+      $.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: url,
+        data: information,
+        success: function(resp){
+          callback(resp);
+        }
+      });
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Heimdal.html">Heimdal</a></li><li><a href="NetworkInformation.html">NetworkInformation</a></li><li><a href="NetworkUtilities.html">NetworkUtilities</a></li><li><a href="SpeedTest.html">SpeedTest</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jan 19 2016 14:28:18 GMT-0300 (CLT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
