@@ -104,7 +104,7 @@
   }
 
   function pingTable(){
-    var nu = new NetworkUtilities();
+    var nu = heimdal.getUtilities();
     function _callback(){
       var pings = nu.getPings();
       var table_body = "<tr><td><b>Página</b></td><td><b>Tiempo (ms)</b></td><td><b>Estado</b></td></tr>";
@@ -121,7 +121,7 @@
       document.getElementById('loading_gif').style.display = 'none';
       document.getElementById('header_ping').innerHTML = "Resultados Test de Ping\n";
     }
-    nu.pingTops(_callback);
+    heimdal.pingTest(_callback);
   }
 
   </script>
