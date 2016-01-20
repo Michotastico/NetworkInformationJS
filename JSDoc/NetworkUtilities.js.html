@@ -45,133 +45,141 @@ function NetworkUtilities(){
   this.pings = [];
 
 
-    /**
-    * ping - ping to a url. WARNING: THIS REQUIRED A SERVER TO CHECK IF A URL REALLY EXISTS. OTHERWISE THE PING SUCCESS WITH FALSE POSITIVE.
-    *
-    * @memberof! NetworkUtilities
-    * @param {string} url the url to be pinged
-    * @param {function} callback Callback function when the specific ping as done. Receive a ping object with the time, the status and the url.
-    * @return {undefined}
-    */
-    this.ping = function(url, callback){
-      var loop_iter = 4;
-      var max_iter = 5;
-      var loop_time = 1000;
-      var counter = 0;
-      var flag = 0;
-      var total_time = 0;
-      var timeout = 9000;
-      var timeout_error = 0;
-      var selfUtilities = this;
-      var _cb = callback;
-      var pinged_url = url;
+  /**
+  * ping - ping to a url. WARNING: THIS REQUIRED A SERVER TO CHECK IF A URL REALLY EXISTS. OTHERWISE THE PING SUCCESS WITH FALSE POSITIVE.
+  *
+  * @memberof! NetworkUtilities
+  * @param {string} url the url to be pinged
+  * @param {function} callback Callback function when the specific ping as done. Receive a ping object with the time, the status and the url.
+  * @return {undefined}
+  */
+  this.ping = function(url, callback){
+    var loop_iter = 4;
+    var max_iter = 5;
+    var loop_time = 1000;
+    var counter = 0;
+    var flag = 0;
+    var total_times = [];
+    var timeout = 9000;
+    var timeout_error = 0;
+    var selfUtilities = this;
+    var _cb = callback;
+    var pinged_url = url;
 
-      var loop = setInterval(function(){
-        _url = "http://" + url + "/" + Date.now() + Math.random().toString(36).substring(7);
+    var loop = setInterval(function(){
+      _url = "http://" + url + "/" + Date.now() + Math.random().toString(36).substring(7);
 
-        if(counter &lt; max_iter){
-          var ping = new XMLHttpRequest();
+      if(counter &lt; max_iter){
+        var ping = new XMLHttpRequest();
 
-          counter ++;
-          ping.seq = counter;
-          flag++;
+        counter ++;
+        ping.seq = counter;
+        flag++;
 
-          ping.start_time = Date.now();
-          ping.timeout = timeout;
-          ping.onreadystatechange = function(){
-            if (ping.readyState == 4 &amp;&amp; timeout_error == 0) {
-              flag--;
-              if (ping.seq > 1) {
-                delta_time = Date.now() - ping.start_time;
-                total_time += delta_time;
-              }
+        ping.start_time = Date.now();
+        ping.timeout = timeout;
+        ping.onreadystatechange = function(){
+          if (ping.readyState == 4 &amp;&amp; timeout_error == 0) {
+            flag--;
+            if (ping.seq > 1) {
+              delta_time = Date.now() - ping.start_time;
+              total_times.push(delta_time);
             }
           }
-          ping.ontimeout = function(){
-            timeout_error = 1;
-          }
-          ping.open("GET", _url, true);
-          ping.send();
         }
-
-        if ((counter > loop_iter) &amp;&amp; (flag &lt; 1)) {
-              clearInterval(loop);
-              var avg_time = Math.round(total_time / (counter - 1));
-              var ping_object = new function(){
-                this.time = avg_time;
-                this.status = "SUCCESS";
-                this.url = pinged_url;
-              }
-              selfUtilities.pings.push(ping_object);
-              _cb(ping_object);
-
-          }
-          if (timeout_error == 1) {
-              clearInterval(loop);
-              var ping_object = new function(){
-                this.time = 0;
-                this.status = "FAILED";
-                this.url = pinged_url;
-              }
-              selfUtilities.pings.push(ping_object);
-              _cb(ping_object);
-              return;
-
-          }
-      }, loop_time);
-    }
-
-    /**
-    * getPings - Get an array with pings.
-    *
-    * @memberof! NetworkUtilities
-    * @return {Array} Pings
-    */
-    this.getPings = function(){
-      return this.pings;
-    }
-
-    /**
-     * pingTops - Make a ping to TOP_CL urls
-     *
-     * @memberof! NetworkUtilities
-     * @param {function} callback The callback function when the proccess finish.
-     * @return {undefined}
-     */
-     this.pingTops = function(callback){
-       var top_length = TOP_CL.length;
-       var selfUtilities = this;
-       function triggerCallback(ping){
-         if(selfUtilities.pings.length == top_length){
-           callback();
-         }
-       }
-       for(_url in TOP_CL){
-         this.ping(TOP_CL[_url], triggerCallback);
-       }
-     }
-
-    /**
-     * checkNAT - Send a request to a specific server to check if the client is behind NAT. With callback function.
-     *
-     * @memberof! NetworkUtilities
-     *
-     * @param {string} url The url of the server.
-     * @param {function} callback The callback function. Receive server answer as param.
-     * @return {undefined}
-     */
-    this.checkNAT = function(url, callback){
-      var information = "" + Date.now();
-      $.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: url,
-        data: information,
-        success: function(resp){
-          callback(resp);
+        ping.ontimeout = function(){
+          timeout_error = 1;
         }
-      });
+        ping.open("GET", _url, true);
+        ping.send();
+      }
+
+      if ((counter > loop_iter) &amp;&amp; (flag &lt; 1)) {
+        clearInterval(loop);
+        var times = total_times.sort();
+        times.pop();
+        var total_time = 0;
+        $.each(times,function() {
+          total_time += this;
+        });
+        var avg_time = Math.round(total_time / times.length);
+        var ping_object = new function(){
+          this.time = avg_time;
+          this.status = "SUCCESS";
+          this.url = pinged_url;
+        }
+        selfUtilities.pings.push(ping_object);
+        _cb(ping_object);
+
+      }
+      if (timeout_error == 1) {
+        clearInterval(loop);
+        var ping_object = new function(){
+          this.time = 0;
+          this.status = "FAILED";
+          this.url = pinged_url;
+        }
+        selfUtilities.pings.push(ping_object);
+        _cb(ping_object);
+        return;
+
+      }
+    }, loop_time);
+  }
+
+  /**
+  * getPings - Get an array with pings.
+  *
+  * @memberof! NetworkUtilities
+  * @return {Array} Pings
+  */
+  this.getPings = function(){
+    return this.pings;
+  }
+
+  /**
+  * pingTops - Make a ping to TOP_CL urls
+  *
+  * @memberof! NetworkUtilities
+  * @param {function} callback The callback function when the proccess finish.
+  * @return {undefined}
+  */
+  this.pingTops = function(callback){
+    var top_length = TOP_CL.length;
+    var top = TOP_CL;
+    var selfUtilities = this;
+    function triggerCallback(ping){
+      if(selfUtilities.pings.length == top_length){
+        callback();
+      }
+      else{
+        selfUtilities.ping(top.pop(), triggerCallback);
+      }
     }
+    this.ping(top.pop(), triggerCallback);
+  }
+
+  /**
+  * checkNAT - Send a request to a specific server to check if the client is behind NAT. With callback function.
+  *
+  * @memberof! NetworkUtilities
+  *
+  * @param {string} url The url of the server.
+  * @param {function} callback The callback function. Receive server answer as param.
+  * @return {undefined}
+  */
+  this.checkNAT = function(url, callback){
+    var information = "" + Date.now();
+    $.ajax({
+      type: 'POST',
+      contentType: "application/json; charset=utf-8",
+      url: url,
+      data: information,
+      success: function(resp){
+        callback(resp);
+      }
+    });
+  }
 }
 </code></pre>
         </article>
@@ -189,7 +197,7 @@ function NetworkUtilities(){
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jan 19 2016 14:28:18 GMT-0300 (CLT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jan 20 2016 11:02:47 GMT-0300 (CLT)
 </footer>
 
 <script> prettyPrint(); </script>
