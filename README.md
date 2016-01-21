@@ -1,4 +1,5 @@
 # NetworkInformationJS
+**Now at [niclabs project](https://github.com/niclabs/NetworkInformation-Library)**
 A Javascript Library to check the network information and download speed of client. Using the principle of front end.
 
 For the network information, it use [IP-API](http://ip-api.com/docs/) for user network basic information and Google Maps to corroborate his data. And for the speed test, it use a  [fork](https://github.com/Michotastico/detectClientSpeed) of [detectClientSpeed](https://github.com/ashanbh/detectClientSpeed) to allow progress checking.
