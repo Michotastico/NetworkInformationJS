@@ -15,10 +15,12 @@
 */
 function Heimdal(server){
   this.server_url = server || 'http://localhost/';
+  this.user_params = new function(){};
   this.network_info = new NetworkInformation();
   this.network_utilities = new NetworkUtilities();
   this.speed_test = [];
   this.time = Date.now();
+  this.ip = '0.0.0.0';
 
 
   /**
@@ -57,6 +59,7 @@ function Heimdal(server){
    */
   this.sendData = function(){
     this.time = Date.now();
+    this.ip = this.network_info.getIp();
     var information = JSON.stringify(this);
     $.ajax({
       type: 'POST',
@@ -71,15 +74,29 @@ function Heimdal(server){
   }
 
   /**
-   * pingTest - Start the ping test to top sites
+   * pingTestSecuentialVersion - Start the ping test to top sites
    *
    * @memberof! Heimdal
    * @param  {function} callback The callback function when the ping test was ready.
+   * @param  {function} earlycall The function called when an individual ping test was ready.
    * @return {undefined}
    */
-  this.pingTest = function(callback){
-    this.network_utilities.pingTops(callback);
+  this.pingTestSecuentialVersion = function(callback, earlycall){
+    this.network_utilities.pingTopSecuentialVersion(earlycall, callback);
   }
+
+  /**
+   * pingTestConcurrentVersion - Start the ping test to top sites
+   *
+   * @memberof! Heimdal
+   * @param  {function} callback The callback function when the ping test was ready.
+   * @param  {function} earlycall The function called when an individual ping test was ready.
+   * @return {undefined}
+   */
+  this.pingTestConcurrentVersion = function(callback, earlycall){
+    this.network_utilities.pingTopConcurrentVersion(earlycall, callback);
+  }
+
 
 
   /**
@@ -108,6 +125,18 @@ function Heimdal(server){
    */
   this.getUtilities = function(){
     return this.network_utilities;
+  }
+
+  /**
+   * addUserParam - Add param to user data.
+   *
+   * @memberof! Heimdal
+   * @param  {string} varname the name of the new var
+   * @param {string} vardata the data of the new var
+   * @return {undefined}
+   */
+  this.addUserParam = function(varname, vardata){
+    this.user_params[varname] = vardata;
   }
 
 }

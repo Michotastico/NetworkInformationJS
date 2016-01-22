@@ -18,6 +18,7 @@ function NetworkInformation(){
   this.currentOs = "Unknown";
   this.networkType = "Unknown";
   this.coordinates = [0, 0];
+  this.proxy = false;
 
   /**
   * getGoogleInfo - receive the data from google and set in the internal vars
@@ -234,6 +235,7 @@ function NetworkInformation(){
       return false;
     }
     else {
+      this.proxy = true;
       return true;
     }
   }
