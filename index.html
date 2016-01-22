@@ -121,7 +121,7 @@
       document.getElementById('loading_gif').style.display = 'none';
       document.getElementById('header_ping').innerHTML = "Resultados Test de Ping\n";
     }
-    heimdal.pingTest(_callback);
+    heimdal.pingTestSecuentialVersion(_callback, function(){});
   }
 
   </script>
